@@ -181,20 +181,27 @@
 
       handleResetParams();
 
-      player.on("downloadcomplete", (ms) => {
+      player.on("ondownloadcomplete", (ms) => {
         console.log("download completed in " + ms + " ms");
+      });
+      player.on("onpause", (ms) => {
+        console.log("video is paused at " + ms + " ms");
+      });
+
+      player.on("onplay", (ms) => {
+        console.log("video is playing now at " + ms + " ms");
+      });
+
+      player.on("onend", () => {
+        console.log("video is completed");
       });
 
       const handleTogglePlayPause = () => {
         if (player.playerPlaying()) {
-          player.on("pause", (ms) => {
-            console.log("video is paused at " + ms + " ms");
-          });
+          player.pause();
           document.getElementById("play-button").innerHTML = "Play";
         } else {
-          player.on("play", (ms) => {
-            console.log("video is playing now at " + ms + " ms");
-          });
+          player.play();
           document.getElementById("play-button").innerHTML = "Pause";
         }
         //console.log("playing", player.playerPlaying());
@@ -215,6 +222,10 @@
         player.displayFrame(frameNumber);
         //console.log("getFrameNumber :" + frameNumber);
       };
+
+      function eventHandler(e) {
+        console.log("The time is: " + e);
+      }
 
       const handleJumpToFrame = () => {
         const rect = event.target.getBoundingClientRect();

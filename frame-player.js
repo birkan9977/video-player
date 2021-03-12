@@ -12,6 +12,7 @@ class FramePlayer {
     this.currentMilliSeconds = 0;
     this.fps = 10;
     this.totalNumberFrames = 175;
+    this.loadFrames();
   }
 
   resetValues() {
@@ -41,29 +42,33 @@ class FramePlayer {
     //console.log(endTime);
     this.downloadTime = endTime - startTime;
     this.frames = images;
+    const event = new CustomEvent("ondownloadcomplete", {
+      detail: { ms: this.downloadTime },
+    });
+    this.canvas.dispatchEvent(event);
   }
-
   on(eventName, callBack) {
-    const event = new Event(eventName);
+    const event = new CustomEvent(eventName);
     switch (eventName) {
-      case "downloadcomplete":
-        this.canvas.addEventListener(
-          "ondownloadcomplete",
-          this.loadFrames(),
-          false
-        );
-        callBack(this.downloadTime);
+      case "ondownloadcomplete":
+        if (typeof callBack === "function") {
+          this.canvas.addEventListener(eventName, callBack);
+        }
         break;
-      case "play":
-        this.canvas.addEventListener("onplay", this.play(), false);
-        callBack(this.currentMilliSeconds);
+      case "onplay":
+        if (typeof callBack === "function") {
+          this.canvas.addEventListener(eventName, callBack);
+        }
         break;
-      case "pause":
-        this.canvas.addEventListener("onpause", this.pause(), false);
-        callBack(this.currentMilliSeconds);
+      case "onpause":
+        if (typeof callBack === "function") {
+          this.canvas.addEventListener(eventName, callBack);
+        }
         break;
-      case "end":
-        this.canvas.addEventListener("onend", this.end(), false);
+      case "onend":
+        if (typeof callBack === "function") {
+          this.canvas.addEventListener(eventName, callBack);
+        }
         break;
 
       default:
@@ -124,10 +129,6 @@ class FramePlayer {
     this.playing = false;
 
     clearInterval(this.timer);
-  }
-
-  end() {
-    console.log("video is completed");
   }
 
   displayFrame(frameNumber) {
