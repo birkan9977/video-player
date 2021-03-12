@@ -49,13 +49,13 @@ class FramePlayer {
       case "downloadcomplete":
         this.canvas.addEventListener(
           "ondownloadcomplete",
-          player.loadFrames(),
+          this.loadFrames(),
           false
         );
         callBack(this.downloadTime);
         break;
       case "play":
-        this.canvas.addEventListener("onplay", player.play(), false);
+        this.canvas.addEventListener("onplay", this.play(), false);
         callBack(this.currentMilliSeconds);
         break;
       case "pause":

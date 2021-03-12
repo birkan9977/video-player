@@ -9,7 +9,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //server security
 app.use(helmet.noSniff());
 app.use(helmet.xssFilter());
-app.use(helmet.noCache());
+
+//hide server info
 app.use(helmet.hidePoweredBy({ setTo: "PHP 7.4.3" }));
 
 app.use("/", express.static(process.cwd() + "/"));
