@@ -4,7 +4,7 @@
   "description": "assignment for ALYO",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "server.js"
   },
   "dependencies": {
     "@babel/core": "^7.7.5",

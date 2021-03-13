@@ -16,6 +16,7 @@ class FramePlayer {
     this.ondownloadcomplete = {};
     this.onpause = {};
     this.onend = {};
+    this.framesLoaded = false;
     this.loadFrames();
   }
 
@@ -25,9 +26,6 @@ class FramePlayer {
   }
 
   loadFrames() {
-    this.ondownloadcomplete = new CustomEvent("ondownloadcomplete", {
-      detail: { ms: this.downloadTime },
-    });
     const startTime = Date.now();
     //console.log(startTime);
     console.log("Loading Frames...");
@@ -45,10 +43,16 @@ class FramePlayer {
     images[0].onload = (e) => {
       this.ctx.drawImage(images[0], 0, 0, 128, 72, 0, 0, 640, 360);
     };
-    const endTime = Date.now();
+
     //console.log(endTime);
-    this.downloadTime = endTime - startTime;
     this.frames = images;
+    this.framesLoaded = true;
+    const endTime = Date.now();
+    this.downloadTime = endTime - startTime;
+    this.on("downloadcomplete", (e) => {
+      console.log("download completed in " + e.detail.ms + " ms");
+    });
+    this.canvas.dispatchEvent(this.ondownloadcomplete);
   }
 
   on(eventName, callBack) {
@@ -60,7 +64,6 @@ class FramePlayer {
           });
         }
         break;
-
       case "play":
         if (typeof callBack === "function") {
           this.onplay = new CustomEvent(eventName, {
@@ -81,11 +84,7 @@ class FramePlayer {
 
       default:
     }
-
     this.canvas.addEventListener(eventName, callBack);
-    if (eventName === "downloadcomplete") {
-      this.canvas.dispatchEvent(this.ondownloadcomplete);
-    }
   }
 
   playerPlaying() {
@@ -202,7 +201,6 @@ class FramePlayer {
       640,
       360
     );
-    //timerPosition += increment;
     this.progressBar();
   }
 }
