@@ -10,3 +10,7 @@
 1. Create frame-player.html put a player container div in it and initialize frame player from the container.
 1. Register all frame player events (see events section) in frame-player.html.
 1. frame-player.js and frame-player.html files must be compressed and delivered as name-surname-frame-player​.zip
+
+
+start server with 
+#### bash serve.sh 3000
