@@ -1,2 +1,4 @@
 #! /bin/sh
-open http://localhost:3000
+PORT=$1 nodemon server.js
+
+

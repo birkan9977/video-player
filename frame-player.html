@@ -8,112 +8,13 @@
     />
     <meta name="description" content="Frame Player" />
     <meta name="author" content="Birkan Bilici" />
+    <title>Video Player</title>
+    <!--styles-->
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <!--scripts-->
     <script src="frame-player.js"></script>
   </head>
-
-  <style>
-    @import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
-    html {
-      font-family: "Roboto", sans-serif;
-      font-size: 14px;
-    }
-    body {
-      display: grid;
-      place-items: center;
-
-      padding: 100px;
-      background: rgba(0, 136, 232, 1);
-
-      background: -moz-linear-gradient(
-        -45deg,
-        rgba(0, 136, 232, 1) 0%,
-        rgba(0, 182, 198, 1) 0%,
-        rgba(0, 136, 232, 1) 100%
-      );
-
-      background: linear-gradient(
-        135deg,
-        rgba(0, 136, 232, 1) 0%,
-        rgba(0, 182, 198, 1) 0%,
-        rgba(0, 136, 232, 1) 100%
-      );
-    }
-    .player-container {
-      display: grid;
-      place-items: center;
-      background-color: rgba(38, 70, 70, 0.5);
-      border-radius: 20px;
-      width: 800px;
-      height: 500px;
-    }
-
-    #progressbar {
-      width: 0;
-      height: 20px;
-      background-color: rgb(32, 204, 75);
-    }
-
-    #progressbarFrame {
-      background-color: hsla(135, 3%, 48%, 0.5);
-      width: 640;
-      height: 20px;
-      z-index: 200;
-    }
-    .interior-frame {
-      display: flex;
-      flex-direction: column;
-      background-color: hsla(135, 3%, 30%, 0.5);
-      width: 640px;
-      height: 480px;
-    }
-    .buttons {
-      display: flex;
-      justify-content: center;
-    }
-
-    #reset-button {
-      font-size: 12px;
-    }
-    button {
-      color: white;
-      text-transform: uppercase;
-      font-family: "Roboto", sans-serif;
-      font-size: 1.2rem;
-      letter-spacing: 0.1rem;
-      font-weight: 300;
-      height: 30px;
-      width: 120px;
-      padding: 0 20px;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      margin-left: 20px;
-      border: none;
-      border-radius: 2rem;
-      transition: all 0.3s ease 0s;
-      cursor: pointer;
-      background-color: #00b4c6;
-      align-self: center;
-    }
-
-    button:hover {
-      background-color: #0088e8;
-    }
-
-    form {
-      display: flex;
-    }
-    .controls {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-
-    label {
-      color: rgb(202, 193, 193);
-      font-weight: 300;
-      align-self: center;
-    }
-  </style>
 
   <body>
     <div id="player" class="player-container">
@@ -129,7 +30,11 @@
           <div id="progressbar"></div>
         </div>
         <div class="buttons">
-          <button id="play-button" onclick="handleTogglePlayPause()">
+          <button
+            id="play-button"
+            onclick="handleTogglePlayPause()"
+            onplay="handleEvent()"
+          >
             Play
           </button>
           <button id="reset-button" onclick="handleResetParams()">
@@ -181,20 +86,32 @@
 
       handleResetParams();
 
-      player.on("downloadcomplete", (ms) => {
-        console.log("download completed in " + ms + " ms");
+      player.on("downloadcomplete", (e) => {
+        console.log("download completed in " + e.detail.ms + " ms");
+        //console.log(e);
+      });
+
+      player.on("pause", (e) => {
+        console.log("video is paused at " + e.detail.ms + " ms");
+        //console.log(e)
+      });
+
+      player.on("play", (e) => {
+        console.log("video is playing now at " + e.detail.ms + " ms");
+        //console.log(e)
+      });
+
+      player.on("end", (e) => {
+        console.log("video is completed");
+        //console.log(e)
       });
 
       const handleTogglePlayPause = () => {
         if (player.playerPlaying()) {
-          player.on("pause", (ms) => {
-            console.log("video is paused at " + ms + " ms");
-          });
+          player.pause();
           document.getElementById("play-button").innerHTML = "Play";
         } else {
-          player.on("play", (ms) => {
-            console.log("video is playing now at " + ms + " ms");
-          });
+          player.play();
           document.getElementById("play-button").innerHTML = "Pause";
         }
         //console.log("playing", player.playerPlaying());
@@ -227,6 +144,10 @@
         const element = document.getElementById("display-fps");
         player.fps = element.value;
         console.log(player.fps);
+      };
+
+      const handleEvent = () => {
+        console.log("onplay");
       };
     </script>
   </body>
