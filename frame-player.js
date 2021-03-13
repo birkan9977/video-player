@@ -12,6 +12,7 @@ class FramePlayer {
     this.currentMilliSeconds = 0;
     this.fps = 10;
     this.totalNumberFrames = 175;
+    this.onplay, this.ondownloadcomplete, this.onpause, (this.onend = null);
     this.loadFrames();
   }
 
@@ -21,6 +22,9 @@ class FramePlayer {
   }
 
   loadFrames() {
+    this.ondownloadcomplete = new CustomEvent("ondownloadcomplete", {
+      detail: { ms: this.downloadTime },
+    });
     const startTime = Date.now();
     //console.log(startTime);
     console.log("Loading Frames...");
@@ -42,39 +46,43 @@ class FramePlayer {
     //console.log(endTime);
     this.downloadTime = endTime - startTime;
     this.frames = images;
-    const event = new CustomEvent("ondownloadcomplete", {
-      detail: { ms: this.downloadTime },
-    });
-    this.canvas.dispatchEvent(event);
   }
+
   on(eventName, callBack) {
-    const event = new CustomEvent(eventName);
     switch (eventName) {
-      case "ondownloadcomplete":
+      case "downloadcomplete":
         if (typeof callBack === "function") {
-          this.canvas.addEventListener(eventName, callBack);
+          this.ondownloadcomplete = new CustomEvent(eventName, {
+            detail: { ms: this.downloadTime },
+          });
         }
         break;
-      case "onplay":
+
+      case "play":
         if (typeof callBack === "function") {
-          this.canvas.addEventListener(eventName, callBack);
+          this.onplay = new CustomEvent(eventName, {
+            detail: { ms: this.currentMilliSeconds },
+          });
         }
         break;
-      case "onpause":
+      case "pause":
         if (typeof callBack === "function") {
-          this.canvas.addEventListener(eventName, callBack);
+          this.onpause = new CustomEvent(eventName, {
+            detail: { ms: this.currentMilliSeconds },
+          });
         }
         break;
-      case "onend":
-        if (typeof callBack === "function") {
-          this.canvas.addEventListener(eventName, callBack);
-        }
+      case "end":
+        this.onend = new CustomEvent(eventName);
         break;
 
       default:
     }
 
-    this.canvas.dispatchEvent(event);
+    this.canvas.addEventListener(eventName, callBack);
+    if (eventName === "downloadcomplete") {
+      this.canvas.dispatchEvent(this.ondownloadcomplete);
+    }
   }
 
   playerPlaying() {
@@ -116,19 +124,25 @@ class FramePlayer {
       //console.log(this.currentMilliSeconds)
 
       if (this.frameNumber > this.totalNumberFrames) {
-        player.on("end", () => {
-          console.log("video complete");
-        });
-        this.frameNumber = 1;
+        this.canvas.dispatchEvent(this.onend);
+
         this.pause();
+        this.frameNumber = 1;
+        return;
       }
+
+      this.onplay.detail.ms = this.currentMilliSeconds;
+      this.canvas.dispatchEvent(this.onplay);
     }, increment);
   }
 
   pause() {
     this.playing = false;
-
     clearInterval(this.timer);
+    if (this.frame <= this.totalNumberFrames) {
+      this.onpause.detail.ms = this.currentMilliSeconds;
+      this.canvas.dispatchEvent(this.onpause);
+    }
   }
 
   displayFrame(frameNumber) {
