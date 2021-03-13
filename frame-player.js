@@ -12,7 +12,10 @@ class FramePlayer {
     this.currentMilliSeconds = 0;
     this.fps = 10;
     this.totalNumberFrames = 175;
-    this.onplay, this.ondownloadcomplete, this.onpause, (this.onend = null);
+    this.onplay = {};
+    this.ondownloadcomplete = {};
+    this.onpause = {};
+    this.onend = {};
     this.loadFrames();
   }
 
