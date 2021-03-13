@@ -1,4 +1,4 @@
-**Video Player in JS** - ALYO - Javascript Assignment
+**Video Player in JS** - Javascript Video Player
 
 ### Requirements:
 

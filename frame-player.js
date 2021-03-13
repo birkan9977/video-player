@@ -142,7 +142,7 @@ class FramePlayer {
   pause() {
     this.playing = false;
     clearInterval(this.timer);
-    if (this.frame <= this.totalNumberFrames) {
+    if (this.frameNumber <= this.totalNumberFrames) {
       this.onpause.detail.ms = this.currentMilliSeconds;
       this.canvas.dispatchEvent(this.onpause);
     }
